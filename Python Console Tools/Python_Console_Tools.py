@@ -1,4 +1,5 @@
-import sys, os, smtplib
+
+import sys, os, smtplib, importlib, inspect
 
 class ConsoleTools:
     intro = 'Welcome to the tool console, just for tools. If you are confused, type "help"'
@@ -31,13 +32,19 @@ class ConsoleTools:
                 self.settingsList[key] = temp
             sFile.close()
 
+    def init_functions(self):
+        subdir = 'tools_functions' #function directory
+        route = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],subdir))) #MAGIC
+        sys.path.insert(0,route)
+        importList = os.listdir(subdir)
+        for imp in importList:
+            if (imp[-3:]) == '.py':
+                module = imp[:-3]
+                obj = importlib.__import__(module)
+                self.functions[module] = (getattr(obj, module), getattr(obj, 'max_args'), getattr(obj, 'help_info'), getattr(obj, 'case_sensitive'))
+                
 
     #Important: this is where functions are defined, before being listed in the dict. All available tool functions must take (self, args)
-    def echo(self, args):
-        out = ''
-        for word in args:
-            out += word+' '
-        print(out)
 
     def quit(self, args):
         print('Quitting...')
@@ -65,7 +72,6 @@ class ConsoleTools:
     functions = {'help':(help, 0, 'Lists commands and their effects.'),
                  'settings':(settings, 0, 'Lists current settings.'),
                  'set':(set, 2, 'set: <setting> <value> sets the given setting to the given value'),
-                 'echo':(echo, -1, 'Prints all arguments back to the user.'),
                  'quit':(quit, 0, 'Quits the program.'),
                  }
 
@@ -96,6 +102,7 @@ class ConsoleTools:
             return False
 
     def mainloop(self):
+        self.init_functions()
         self.init_settings()
         print(self.intro)
         while not self.stop:
