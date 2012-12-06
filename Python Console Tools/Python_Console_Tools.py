@@ -1,6 +1,8 @@
 
 import sys, os, smtplib, importlib, inspect
 
+#write something to account for an empty import folder
+
 class ConsoleTools:
     intro = 'Welcome to the tool console, just for tools. If you are confused, type "help"'
     prompt = '(Tools): '
@@ -41,7 +43,7 @@ class ConsoleTools:
             if (imp[-3:]) == '.py':
                 module = imp[:-3]
                 obj = importlib.__import__(module)
-                self.functions[module] = (getattr(obj, module), getattr(obj, 'max_args'), getattr(obj, 'help_info'), getattr(obj, 'case_sensitive'))
+                self.functions[getattr(obj,'cmd_name')] = (getattr(obj, module), getattr(obj, 'max_args'), getattr(obj, 'help_info'), getattr(obj, 'case_sensitive'))
                 
 
     #Important: this is where functions are defined, before being listed in the dict. All available tool functions must take (self, args)
