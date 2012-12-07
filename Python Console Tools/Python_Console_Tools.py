@@ -9,7 +9,10 @@ class ConsoleTools:
 
     #To add a setting, simply add its alias and default value (both must be strings) to the settings dict. Note the value will have to be interpreted later
     #Note the file check is not very sophisticated; if you adjust settings in code, it's best to just delete the file and let the application generate a new one
-    settingsList = {'email': '', 'anonymous': 'F'}
+    settingsList = { 'subject': 'T',
+    				 'anonymous': 'F',
+					 'password':'',
+					 'toAddress':'arg'}
     def write_settings(self):
             sFile = open('settings.tool', 'w')
             sFile.write(self.settingsWarning)
@@ -41,8 +44,8 @@ class ConsoleTools:
             if (imp[-3:]) == '.py':
                 module = imp[:-3]
                 obj = importlib.__import__(module)
-                self.functions[module] = (getattr(obj, module), getattr(obj, 'max_args'), getattr(obj, 'help_info'), getattr(obj, 'case_sensitive'))
-                
+                self.functions[getattr(obj, 'command_name')] = (getattr(obj, module), getattr(obj, 'max_args'), getattr(obj, 'help_info'), getattr(obj, 'case_sensitive'))
+                 #When writing modules for this program, command_name should be the same as the name of the function that will be called within the module
 
     #Important: this is where functions are defined, before being listed in the dict. All available tool functions must take (self, args)
 
@@ -69,15 +72,15 @@ class ConsoleTools:
 
 
     #Important: this is the function dict. It holds functions as tuples in the form function_name: (function, max_args, help info). -1 means no max
-    functions = {'help':(help, 0, 'Lists commands and their effects.'),
-                 'settings':(settings, 0, 'Lists current settings.'),
-                 'set':(set, 2, 'set: <setting> <value> sets the given setting to the given value'),
-                 'quit':(quit, 0, 'Quits the program.'),
+    functions = {'help':(help, 0, 'Lists commands and their effects.', False),
+                 'settings':(settings, 0, 'Lists current settings.', False),
+                 'set':(set, 2, 'set: <setting> <value> sets the given setting to the given value', True),
+                 'quit':(quit, 0, 'Quits the program.', False),
                  }
 
 
     def parseline(self,line):
-        #Parses input, and then returns the (cmd, args) as a tuple
+        #Parses input, and then returns the (cmd, argsLower, argsRaw) as a tuple
         line = line.strip() 
         if not line:
             return None, None
@@ -85,7 +88,7 @@ class ConsoleTools:
         l = len(line)
         while i < l and line[i] != ' ': 
             i = i+1
-        return line[:i], line[i:].strip().split()
+        return line[:i].lower(), line[i:].lower().strip().split(), line[i:].strip().split()
 
     def callfunc(self, cmd, args):
         #Attempts to the call the function; handles extra args, and returns false if the function is invalid
@@ -106,11 +109,17 @@ class ConsoleTools:
         self.init_settings()
         print(self.intro)
         while not self.stop:
-            cmd, args = self.parseline(input(self.prompt).lower())
+        #It saves the args in lower case and Raw form, then decides which to use based on the command.
+        #this is general: if we decide that any other command requires case-sensitive input, we can just change its case_sensitive variable
+            parsed = self.parseline(input(self.prompt))
+            cmd = parsed[0]
+            if self.functions[cmd][3]:
+                args = parsed[2]
+            if not self.functions[cmd][3]:
+                args = parsed[1]
             if not self.callfunc(cmd, args):
                 print('Error: Unrecognized command. Type "help" for a list of commands.')
 
 
 
 ConsoleTools().mainloop()
-
