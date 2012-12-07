@@ -1,5 +1,4 @@
-
-import sys, os, smtplib, importlib, inspect
+import sys, os, importlib, inspect
 
 class ConsoleTools:
     intro = 'Welcome to the tool console, just for tools. If you are confused, type "help"'
