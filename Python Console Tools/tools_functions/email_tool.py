@@ -1,6 +1,16 @@
 import smtplib, sys
 from email.mime.text import MIMEText
 # email tool function
+# currently takes the 'to' address as a command line argument.
+# Plans:
+# -add format options, like automatic vs. user-generated subject line
+# -make to address argument optional
+# -add more sophisticated error handling
+# -put 'attempting pre-entered password...' and 'password failed, try again' messages 
+#    during password authentication
+# -put password and from address in a loop with an exit command, 
+#    so that bad input doesn't crash the program
+# -add error handling for nonexistent/poorly formatted 'to' address
 
 max_args = 1
 help_info = 'emails the address supplied as a command line argument with an email from the user\'s gmail account. The subject heading is the calling program.'
