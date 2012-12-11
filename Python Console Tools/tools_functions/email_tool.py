@@ -1,14 +1,6 @@
 import smtplib, sys
 from email.mime.text import MIMEText
 # email tool function
-
-max_args = 1
-help_info = 'emails the address supplied as a command line argument with an email from the user\'s gmail account. The subject heading is the calling program.'
-case_sensitive = False
-command_name = 'email'
-settings = {'subject': 'T', 'anonymous': 'F','password':'','toAddress':'arg'}
-
-
 def email_tool(self,args):
     message = input('Enter message body: ')
     # Create a text/plain message
@@ -29,3 +21,15 @@ def email_tool(self,args):
     
     s.send_message(msg)
     s.quit()
+
+#function reference, min args, max args, help info, case sensitive?, function name
+func_alias = 'email'
+func_info = (email_tool,
+             1, 
+             1, 
+            'emails the address supplied as a command line argument with an email from the user\'s gmail account. The subject heading is the calling program.',
+            False,
+            )
+settings = {'subject': ('T', False), 'anonymous': ('F', False),'password':('', True),'toAddress':('WERP', False)}
+
+

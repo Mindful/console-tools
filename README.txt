@@ -6,7 +6,7 @@ max_args = <a number: max arguments passed to this function from the console; -1
 help_info = <a string: this determines what is printed for the function when user calls help>
 case_sensitive = <a boolean: determines whether the arguments for this function are automatically made lowercase>
 command_name = <a string: this is the name of the command, and MUST BE IDENTICAL to the name of the function defined below>
-settings = <an OPTIONAL dict: this can be omitted, but it includes any settings needed to run the command>
+settings = <an OPTIONAL dict: this can be omitted, but it includes any settings needed to run the command. settings are in the form (string: value, bool: is encrpyted?)>
 
 
 def <command_name>(self,args):

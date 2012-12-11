@@ -1,4 +1,4 @@
-import sys, os, importlib, inspect
+import sys, os, importlib, inspect, string
 
 class ConsoleTools:
     intro = 'Welcome to the tool console, just for tools. If you are confused, type "help"'
@@ -8,12 +8,20 @@ class ConsoleTools:
 
     #To add a setting, simply add its alias and default value (both must be strings) to the settings dict. Note the value will have to be interpreted later
     #Note the file check is not very sophisticated; if you adjust settings in code, it's best to just delete the file and let the application generate a new one
+    def simpleEncrypt(self, item):
+        encrypt = str.maketrans(string.ascii_lowercase+string.ascii_uppercase+string.digits, string.digits+string.ascii_uppercase+string.ascii_lowercase)
+        return item.translate(encrypt)
+
+    def simpleDecrypt(self, item):
+        revert = str.maketrans(string.digits+string.ascii_uppercase+string.ascii_lowercase, string.ascii_lowercase+string.ascii_uppercase+string.digits)
+        return item.translate(revert)
+
     settingsList = {}
     def write_settings(self):
             sFile = open('settings.tool', 'w')
             sFile.write(self.settingsWarning)
             for key in self.settingsList:
-                sFile.write(key+' - '+self.settingsList[key]+'\n')
+                sFile.write(key+' - '+self.settingsList[key][0]+'\n')
             sFile.close()
 
     def init_settings(self):
@@ -27,7 +35,7 @@ class ConsoleTools:
                 temp = item[item.find('- '):].strip('- ')
                 key = item[:item.find(' -')]
                 if key in self.settingsList:
-                    self.settingsList[key] = temp
+                    self.settingsList[key] = (temp, self.settingsList[key][1])
             sFile.close()
         self.write_settings()
 
@@ -40,7 +48,7 @@ class ConsoleTools:
             if (imp[-3:]) == '.py':
                 module = imp[:-3]
                 obj = importlib.__import__(module)
-                self.functions[getattr(obj, 'command_name')] = (getattr(obj, module), getattr(obj, 'max_args'), getattr(obj, 'help_info'), getattr(obj, 'case_sensitive'))
+                self.functions[getattr(obj, 'func_alias')] = getattr(obj, 'func_info')
                 settings = getattr(obj, 'settings', False)
                 if settings:
                     for key in settings:
@@ -55,15 +63,21 @@ class ConsoleTools:
 
     def help(self, args):
         for key in self.functions:
-            print(key+': '+self.functions[key][2]+'\n')
+            print(key+': '+self.functions[key][3]+'\n')
 
     def settings(self, args):
         for key in self.settingsList:
-            print(key+': '+self.settingsList[key])
+            if self.settingsList[key][1]:
+                print(key+': <encrypted>')
+            else:
+                print(key+': '+self.settingsList[key][0])
 
     def set(self, args):
         if args[0] in self.settingsList:
-            self.settingsList[args[0]] = args[1]
+            if self.settingsList[args[0]][1]:
+                self.settingsList[args[0]] = (self.simpleEncrypt(args[1]), self.settingsList[args[0]][1])
+            else:
+                self.settingsList[args[0]] = (args[1], self.settingsList[args[0]][1])
             self.write_settings()
         else:
             print("Error: Invalid setting.")
@@ -71,11 +85,11 @@ class ConsoleTools:
 
 
 
-    #Important: this is the function dict. It holds functions as tuples in the form function_name: (function, max_args, help info). -1 means no max
-    functions = {'help':(help, 0, 'Lists commands and their effects.', False),
-                 'settings':(settings, 0, 'Lists current settings.', False),
-                 'set':(set, 2, 'set: <setting> <value> sets the given setting to the given value', True),
-                 'quit':(quit, 0, 'Quits the program.', False),
+    #Important: this is the function dict. It holds functions as tuples in the form function_name: (function, min_args, max_args, help info). -1 means no max
+    functions = {'help':(help, -1, 0, 'Lists commands and their effects.', False),
+                 'settings':(settings, -1, 0, 'Lists current settings.', False),
+                 'set':(set, 2, 2, 'set: <setting> <value> sets the given setting to the given value', True),
+                 'quit':(quit, -1, 0, 'Quits the program.', False),
                  }
 
 
@@ -91,18 +105,18 @@ class ConsoleTools:
         return line[:i].lower(), line[i:].lower().strip().split(), line[i:].strip().split()
 
     def callfunc(self, cmd, args):
-        #Attempts to the call the function; handles extra args, and returns false if the function is invalid
-        if cmd in self.functions:
-            max = self.functions[cmd][1]
-            length = len(args)
-            if max != -1 and length > max: #-1 check comes first because Python does support short-circuiting for 'and' and 'or'
-                print('Error: %s takes up to %s arguments. The last %s arguments will be discarded.' % (cmd, max, length-max))
-                while len(args) > max:
-                    args.pop()
-            self.functions[cmd][0](self, args)
-            return True
-        else:
-            return False
+        #MUST BE CHANGED TO ACCOUNT FOR MIN AND MAX ARGS
+        #IMPORTANT
+        #DO SOMETHING HERE
+        #REALLY
+        max = self.functions[cmd][2]
+        length = len(args)
+        if max != -1 and length > max: #-1 check comes first because Python does support short-circuiting for 'and' and 'or'
+            print('Error: %s takes up to %s arguments. The last %s arguments will be discarded.' % (cmd, max, length-max))
+            while len(args) > max:
+                args.pop()
+        self.functions[cmd][0](self, args)
+
 
     def mainloop(self):
         self.init_functions()
@@ -113,11 +127,13 @@ class ConsoleTools:
         #this is general: if we decide that any other command requires case-sensitive input, we can just change its case_sensitive variable
             parsed = self.parseline(input(self.prompt))
             cmd = parsed[0]
-            if self.functions[cmd][3]:
-                args = parsed[2]
-            if not self.functions[cmd][3]:
-                args = parsed[1]
-            if not self.callfunc(cmd, args):
+            if cmd in self.functions:
+                if self.functions[cmd][4]:
+                    args = parsed[2]
+                else:
+                    args = parsed[1]
+                self.callfunc(cmd, args)
+            else:
                 print('Error: Unrecognized command. Type "help" for a list of commands.')
 
 

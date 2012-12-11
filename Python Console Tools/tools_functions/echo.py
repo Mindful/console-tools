@@ -1,12 +1,15 @@
 #echo function
-
-max_args = -1
-help_info = 'Prints all arguments back to the user.'
-case_sensitive = False
-command_name = 'echo'
-
 def echo(self, args):
     out = ''
     for word in args:
         out += word+' '
     print(out)
+#function reference, min args, max args, help info, case sensitive?, function name
+func_alias = 'echo'
+func_info = (echo,
+             0,
+             1,
+             'Prints all arguments back to the user.',
+             False,
+             )
+
