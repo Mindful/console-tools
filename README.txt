@@ -2,12 +2,14 @@ A modular console application: it dynamically loads properly formatted modules f
 
 Template for command modules:
 
-max_args = <a number: max arguments passed to this function from the console; -1 means no max>
-help_info = <a string: this determines what is printed for the function when user calls help>
-case_sensitive = <a boolean: determines whether the arguments for this function are automatically made lowercase>
-command_name = <a string: this is the name of the command, and MUST BE IDENTICAL to the name of the function defined below>
-settings = <an OPTIONAL dict: this can be omitted, but it includes any settings needed to run the command. settings are in the form (string: value, bool: is encrpyted?)>
+def <function>(self,args):
+	this is where the actual function goes; arguments come in as a list of strings in args[] and self contains a reference to the calling class.
 
-
-def <command_name>(self,args):
-	this is where the actual function goes; arguments come in as a list of strings in args[] and self contains a reference to the calling class. 
+func_alias = 'name'  - a string that determines the name the function uses in the console
+func_info = (<function reference>, - the actual function itself
+             <min args>, - the minimum number of arguments the function can take. fewer than min args will cause the function not to run
+             <max args>, - the maximum number of arguments the function can take. excess arguments will be discarded
+            'help info', - the information displayed about this function when a user runs the "help" command
+            <case sensitive?>, - a bool determining whether or not the function's input arguments are checked for case
+            )
+ 
