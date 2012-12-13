@@ -1,3 +1,4 @@
+
 import os, inspect, subprocess
 
 subjects = ['discretemath', 'java', 'arch', 'probsolv']
@@ -45,3 +46,4 @@ func_info = (submit,
             False, #may end up this does need to be case sensitive; we'll see
             )
 settings = {'ada_username':('', True),'ada_password':('', True)}
+
