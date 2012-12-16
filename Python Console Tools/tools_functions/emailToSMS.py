@@ -20,43 +20,46 @@ def emailToSMS(self, args):
         couldFindCarrier = False
         print('Error: unrecognized carrier.')
     else:
-        address = number + carrierCodes[carrier]
+        toAddress = number + carrierCodes[carrier]
+        fromAddress = input('\'From\' address (gmail only): ')
+        password = input('Password: ')
         messages = parseText(input('Message: '))
         s = smtplib.SMTP('smtp.gmail.com', 587)
+        s.ehlo()
+        s.starttls()
         for segment in messages:
-            send(self, segment, address, s)
+            send(self, segment, fromAddress, password, toAddress, s)
         s.quit()
 
 def parseText(message):
 # split the message into parts smaller than 150 characters, 
 # preferably at spaces
-    messages = int(len(message)/150)
+    messages = int(len(message)/110)
     messageList = [''] * (messages + 1)
     i = 0
-    while len(message) > 150:
-        temp = message[:message.rfind(' ')]
+    while len(message) > 110:
+        temp = message[:message[:150].rfind(' ')]
         messageList[i] = temp
-        del message[:message.rfind(' ')]
+        message = message[message[:150].rfind(' '):]
         i += 1
     messageList[messages] = message
+    print(messageList)
     return messageList
     
-def send(self, message, address, connection):
+def send(self, msg, fromAddress, password, toAddress, s):
     # Create a text/plain message
-    message = MIMEText(message)
+    message = MIMEText(msg)
     message['Subject'] = 'Sent from %s' % sys.argv[0]
-    message['From'], message['To'] = input('\'From\' address? (gmail only): '), address
-    # Send the message via gmail SMTP server
-    connection.ehlo()
-    connection.starttls()
+    message['From'], message['To'] = fromAddress, toAddress
     if self.settingsList['password'] is '':
-        connection.login(message['From'], input('Password: '))
+        s.login(message['From'], password)
     else:
      try:
-        connection.login(message['From'], self.settingsList['password'][0])
+        s.login(message['From'], self.settingsList['password'][0])
      except smtplib.SMTPAuthenticationError:
-        connection.login(message['From'], input('Password: '))
-    connection.send_message(message)
+        s.login(message['From'], password)
+
+    s.send_message(message)
     
 func_alias = 'txt'
 func_info = (emailToSMS,
