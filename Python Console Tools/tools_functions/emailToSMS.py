@@ -23,21 +23,17 @@ def emailToSMS(self, args):
         toAddress = number + carrierCodes[carrier]
         fromAddress = input('\'From\' address (gmail only): ')
         password = input('Password: ')
-        messages = parseText(input('Message: '))
-        s = smtplib.SMTP('smtp.gmail.com', 587)
-        s.ehlo()
-        s.starttls()
+        messages = parseTXT(input('Message: '))
         for segment in messages:
-            send(self, segment, fromAddress, password, toAddress, s)
-        s.quit()
+            send(self, segment, fromAddress, password, toAddress)
 
-def parseText(message):
+def parseTXT(message):
 # split the message into parts smaller than 150 characters, 
 # preferably at spaces
-    messages = int(len(message)/110)
+    messages = int(len(message)/150)
     messageList = [''] * (messages + 1)
     i = 0
-    while len(message) > 110:
+    while len(message) > 150:
         temp = message[:message[:150].rfind(' ')]
         messageList[i] = temp
         message = message[message[:150].rfind(' '):]
@@ -46,12 +42,18 @@ def parseText(message):
     print(messageList)
     return messageList
     
-def send(self, msg, fromAddress, password, toAddress, s):
+def send(self, msg, fromAddress, password, toAddress):
     # Create a text/plain message
     message = MIMEText(msg)
-    message['Subject'] = 'Sent from %s' % sys.argv[0]
+    message['Subject'] = ''
     message['From'], message['To'] = fromAddress, toAddress
+    s = smtplib.SMTP('smtp.gmail.com', 587)
+    s.ehlo()
+    s.starttls()
     if self.settingsList['password'] is '':
+     try:
+        s.login(message['From'], password)
+     except smtplib.SMTPAuthenticationError:
         s.login(message['From'], password)
     else:
      try:
@@ -60,6 +62,7 @@ def send(self, msg, fromAddress, password, toAddress, s):
         s.login(message['From'], password)
 
     s.send_message(message)
+    s.quit()
     
 func_alias = 'txt'
 func_info = (emailToSMS,
