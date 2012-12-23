@@ -20,6 +20,24 @@ class ConsoleTools:
         revert = str.maketrans(string.digits+string.ascii_uppercase+string.ascii_lowercase, string.ascii_lowercase+string.ascii_uppercase+string.digits)
         return item.translate(revert)
 
+    def confirmationPrompt(self, prompt = "yes/no:"):
+        while True:
+            inp = input(prompt).lower()
+            if inp == 'yes':
+                return True
+            elif inp == 'no':
+                return False
+            else:
+                print('Error: input not recognized. Please enter "yes" or "no".')
+    def boolSetting(self, setting):
+        if self.settingsList[setting][0].lower() == 't':
+            return True
+        elif self.settingsList[setting][0].lower() == 'f':
+            return False
+        else:
+            raise TypeError("Setting was not any of 'T', 'F', 't', 'f'")
+
+
     settingsList = {}
     def write_settings(self):
             sFile = open('settings.tool', 'w')
@@ -46,9 +64,6 @@ class ConsoleTools:
         self.write_settings()
 
     def init_functions(self):
-        #
-        #write some exception handling in here in case some unsavory person has an improperly formatted .py file in tools_functions
-        #
         if not os.path.isdir(self.toolsRoute):
             print('tools_functions directory not found. Empty directory will be created.\n')
             os.mkdir(self.toolsRoute)
@@ -59,11 +74,14 @@ class ConsoleTools:
             if (imp[-3:]) == '.py':
                 module = imp[:-3]
                 obj = importlib.__import__(module)
-                self.functions[getattr(obj, 'func_alias')] = getattr(obj, 'func_info')
-                settings = getattr(obj, 'settings', False)
-                if settings:
-                    for key in settings:
-                        self.settingsList[key] = settings[key]
+                try:
+                    self.functions[getattr(obj, 'func_alias')] = getattr(obj, 'func_info')
+                    settings = getattr(obj, 'settings', False)
+                    if settings:
+                        for key in settings:
+                            self.settingsList[key] = settings[key]
+                except AttributeError:
+                    print('Failed to load ' + imp + ' because it is not a properly formatted tools\nmodule. Please ensure it is written to template (check the readme).')
                  #When writing modules for this program, command_name should be the same as the name of the function that will be called within the module
 
     #Important: this is where functions are defined, before being listed in the dict. All available tool functions must take (self, args)

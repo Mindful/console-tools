@@ -1,11 +1,8 @@
 #-----------------
 #It is important to note that this module does not actually perform any file operations; it wraps pscp and plink. Along those lines,
 #pscp.exe and plink.exe must both be in the same directory as the module (tools_functions) in order for it to work properly.
-
-
-#WRITE A FUNCTION SPECIFICALLY FOR VIEWING
 #-----------------
-import os, inspect, subprocess, sys, time
+import os, inspect, subprocess, sys, time, zipfile, shutil, tarfile
 
 from queue import Queue, Empty
 from threading import Thread
@@ -45,8 +42,8 @@ class outReader:
 subjects = ['discretemath', 'java', 'arch', 'probsolv']
 def submit(self, args):
     #All these if(x) then return statements are just error checking. want to make sure everything's in order before we try an upload
-    pscproute = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],'pscp.exe')))
-    plinkroute = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],'plink.exe')))
+    pscproute = os.path.join(self.toolsRoute, 'pscp.exe')
+    plinkroute = os.path.join(self.toolsRoute, 'plink.exe')
     if not (os.path.exists(pscproute)):
         print('Error: could not find pscp.exe in the tools_functions directory.')
         return
@@ -72,19 +69,36 @@ def submit(self, args):
             toPrint+=' ' +subj
         print(toPrint)
         return
-    if not (os.path.exists(args[1])):  #right now there's really no good way to get filenames with spaces; will have to come back to this
-        print('Error: could not find file. Remember that files are searched for relative to the tools console.')
+    #this is where we start looking at formatting the file to upload it
+    folder = os.path.normpath(args[1])
+    loc, fold = os.path.split(folder)
+    if loc == "":
+        loc=self.homeRoute
+    if os.path.isfile(folder):
+        invalid = not (folder[-4:] == '.pdf' or zipfile.is_zipfile(folder) or tarfile.is_tarfile(folder))
+        if invalid and not self.confirmationPrompt("Not a .pdf, .zip or .tar file. Are you sure you want to upload? "):
+            return #"and" is short circuited; confirmation prompt only called if file not a suggested type
+        fileName = fold
+        print("upping "+fold)
+    elif os.path.isdir(folder):
+        if not self.confirmationPrompt("You have given a directory. Would you like to zip and upload it? "):
+            return
+        shutil.make_archive(fold,'zip',loc,fold)
+        fileName = fold+".zip"
+        print("upping dir " +fileName)
+    else:
+        print("Error: could not find given folder or directory.")
         return
-    #THIS is where we check if the file is a directory, and then we zip it, otherwise we check if it's a pdf and if it's not we spaz out
-    fileName = args[1] #may sometimes be exactly args[1], but othertimes it will be zipped folder
+    #this is where we upload the file
     print('\nUploading ' + fileName + '...')
     try:
         upload_ada(self, fileName, usName)
     except adaError as err:
         print("Error interacting with Ada: "+err.value)
         return
-    #catch exceptions from failure of upload
+    #and here we go onto ada to issue submit commands and interact with the possible override prompt
     print('Preparing to submit as ' +usName+'...')
+    fileName = os.path.split(fileName)[1] #removes any possible superflous location information
     try:
         submit_ada(self, args[0], fileName, usName)
     except adaError as err:
@@ -108,7 +122,7 @@ def upload_ada(self, file, user):
         proc.kill()
         raise adaError("process timed out.")
         return
-    if s.rfind(file)!= -1:
+    if s.rfind("ETA: 00:00:00 | 100%")!= -1:
         print(s)
     else:
         raise adaError(s)
@@ -156,7 +170,10 @@ def view_ada(self, user):
 
 
 def submit_ada(self, thread, file, user):
-    overwrite = (self.settingsList['csf_overwrite'][0].lower() != 'f') # need a better convention for getting from string to bool
+    try:
+        overwrite = self.boolSetting('csf_overwrite')
+    except TypeError:
+        raise adaError('csf_overwrite setting was not a recognizable\nboolean value. Pleaseset csf_overwrite to "T" or "F".')
     connectionArgs = [self.toolsRoute+'\\'+'plink.exe', 
                   '-ssh', 
                   '-pw', 
