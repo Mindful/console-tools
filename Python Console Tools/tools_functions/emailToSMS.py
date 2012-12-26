@@ -10,7 +10,7 @@ def emailToSMS(self, args):
     carrierCodes = {
     'sprint': '@messaging.sprintpcs.com',
     'verizon': '@vtext.com',
-    't-mobile': 'phonenumber@tmomail.net',
+    't-mobile': '@tmomail.net',
     'at&t': '@txt.att.net',
     'virgin mobile': '@vmobl.com',
     'us cellular': '@email.uscc.net',
@@ -34,7 +34,6 @@ def emailToSMS(self, args):
     else:
         number = args[0]
         carrier = args[1]
-    print(addon)
     couldFindCarrier = True
     if carrier not in carrierCodes:
         couldFindCarrier = False
@@ -59,7 +58,6 @@ def parseTXT(message):
         message = message[message[:150].rfind(' '):]
         i += 1
     messageList[messages] = message
-    print(messageList)
     return messageList
     
 def send(self, msg, fromAddress, password, toAddress):
@@ -67,7 +65,7 @@ def send(self, msg, fromAddress, password, toAddress):
     message = MIMEText(msg)
     message['Subject'] = ''
     message['From'], message['To'] = fromAddress, toAddress
-    mailHost = msg['From']
+    mailHost = message['From']
     mailHost = mailHost[mailHost.index('@')+1:]
     try:
         s = smtplib.SMTP(serverDict[mailHost][0],serverDict[mailHost][1])
@@ -79,7 +77,7 @@ def send(self, msg, fromAddress, password, toAddress):
      try:
         s.login(message['From'], password)
      except smtplib.SMTPAuthenticationError:
-        s.login(message['From'], password)
+        s.login(message['From'], input('Password: '))
     else:
      try:
         s.login(message['From'], self.simpleDecrypt(self.settingsList['password'][0]))
@@ -88,8 +86,7 @@ def send(self, msg, fromAddress, password, toAddress):
 
     s.send_message(message)
     s.quit()
-
-#I'd also like to add the option for user-defined smtp settings...shouldn't be too hard
+    
 serverDict = {  'gmail.com':('smtp.gmail.com', 587),
                 'hotmail.com':('smtp.live.com', 587),
                 'yahoo.com':('smtp.mail.yahoo.com', 995),
