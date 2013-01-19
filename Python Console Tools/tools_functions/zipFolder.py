@@ -34,4 +34,3 @@ func_info = (zipFolder,
              "zip_submit: <Assignment_Name> <directory> creates a zip folder 'AssignmentN_Name.zip' in the directory you run it from",
              True,
              )
-

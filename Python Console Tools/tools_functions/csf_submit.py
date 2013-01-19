@@ -181,9 +181,9 @@ def submit_ada(self, thread, file, user):
                   user+'@ada.evergreen.edu',
                   ]
     if overwrite:
-        serverCommands = ("csf_submit "+thread+" "+file, "exit", "yes")
+        serverCommands = ("csf_submit "+thread+" "+file, "exit", "y")
     else:
-        serverCommands = ("csf_submit "+thread+" "+file, "exit", "no")
+        serverCommands = ("csf_submit "+thread+" "+file, "exit", "n")
     discardString = ']0;'+user+'@ada: ~[0;32m'+user+'[0;37m@[0;32mada[00m:[01;34m~[00m$ '
     proc = subprocess.Popen(connectionArgs, bufsize=1, shell=False, stdin=subprocess.PIPE,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     reader = outReader(proc.stdout)
