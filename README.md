@@ -29,5 +29,6 @@ func_info = (exampleFunc, #the actual function itself
             'This is a demo function; it does nothing.', #the information displayed about this function when a user runs the "help" command
             False, #a bool determining whether or not the function's input arguments are checked for case
             )
- #It's very important to note that while you can do whatever you want inside the module, your function owns the main console for only as long as it runs. Additionally, the func_alias and func_info variables MUST be formatted properly for the main console to load your module.
+ #It's very important to note that while you can do whatever you want inside the module, your function owns the main console for only as long as it runs. 
+ #Additionally, the func_alias and func_info variables MUST be formatted properly for the main console to load your module.
 ```
