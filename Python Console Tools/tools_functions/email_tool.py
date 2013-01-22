@@ -1,4 +1,4 @@
-import smtplib, sys
+import smtplib, sys, getpass
 from email.mime.text import MIMEText
 
 def email_tool(self,args):
@@ -36,14 +36,14 @@ def email_tool(self,args):
     s.starttls()
     if self.settingsList['password'] is '':
         try:
-            s.login(msg['From'], input('Password: '))
+            s.login(msg['From'], getpass.getpass())
         except smtplib.SMTPAuthenticationError:
-            s.login(input('\'From\': '), input('Password: '))
+            s.login(input('\'From\': '), getpass.getpass())
     else:
      try:
         s.login(msg['From'], self.simpleDecrypt(self.settingsList['password'][0]))
      except smtplib.SMTPAuthenticationError:
-        s.login(msg['From'], input('Password: '))
+        s.login(msg['From'], getpass.getpass())
     
     s.send_message(msg)
     s.quit()

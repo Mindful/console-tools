@@ -1,4 +1,4 @@
-import smtplib, sys, os, importlib
+import smtplib, sys, os, importlib, getpass
 from email.mime.text import MIMEText
 from os import path
 
@@ -41,7 +41,7 @@ def emailToSMS(self, args):
     else:
         toAddress = number + carrierCodes[carrier]
         fromAddress = input('\'From\' address: ')
-        password = input('Password: ')
+        password = getpass.getpass()
         messages = parseTXT(input('Message: '))
         for segment in messages:
             send(self, segment, fromAddress, password, toAddress)
@@ -77,12 +77,18 @@ def send(self, msg, fromAddress, password, toAddress):
      try:
         s.login(message['From'], password)
      except smtplib.SMTPAuthenticationError:
-        s.login(message['From'], input('Password: '))
+        password = getpass.getpass('Invalid password: ')
+        while password != 'quit':
+            s.login(message['From'], password)
+            password = getpass.getpass('Invalid password: ')
     else:
      try:
         s.login(message['From'], self.simpleDecrypt(self.settingsList['password'][0]))
      except smtplib.SMTPAuthenticationError:
-        s.login(message['From'], password)
+        password = getpass.getpass('Error: unrecognized password in "settings.tool". Password: ')
+        while password != 'quit':
+            s.login(message['From'], password)
+            password = getpass.getpass('Invalid password. Password: ')
 
     s.send_message(message)
     s.quit()
@@ -90,7 +96,8 @@ def send(self, msg, fromAddress, password, toAddress):
 serverDict = {  'gmail.com':('smtp.gmail.com', 587),
                 'hotmail.com':('smtp.live.com', 587),
                 'yahoo.com':('smtp.mail.yahoo.com', 995),
-                'msn.com':('smtp.live.com', 587)}
+                'msn.com':('smtp.live.com', 587),
+                'live.com':('smtp.live.com', 587)}
 func_alias = 'txt'
 func_info = (emailToSMS,
              2,
