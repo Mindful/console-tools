@@ -79,13 +79,11 @@ def submit(self, args):
         if invalid and not self.confirmationPrompt("Not a .pdf, .zip or .tar file. Are you sure you want to upload? "):
             return #"and" is short circuited; confirmation prompt only called if file not a suggested type
         fileName = fold
-        print("upping "+fold)
     elif os.path.isdir(folder):
         if not self.confirmationPrompt("You have given a directory. Would you like to zip and upload it? "):
             return
         shutil.make_archive(fold,'zip',loc,fold)
         fileName = fold+".zip"
-        print("upping dir " +fileName)
     else:
         print("Error: could not find given folder or directory.")
         return

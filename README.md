@@ -22,7 +22,7 @@ Module Template
 def exampleFunc(self,args):
     pass #this is where the actual function goes; arguments come in as a list of strings in args[] and self contains a reference to the calling class.
 
-func_alias = 'name'  #a string that represents the name by which your function is called as a command
+func_alias = 'example_function'  #a string that represents the name by which your function is called as a command. cannot include whitespace characters
 func_info = (exampleFunc, #the actual function itself
              1, #the minimum number of arguments the function can take. fewer than min args will cause the function not to run
              1, #the maximum number of arguments the function can take. excess arguments will be discarded
