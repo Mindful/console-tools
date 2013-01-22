@@ -21,6 +21,8 @@ def export(name, info_type):
     i = 0
     for item in contactsList:
         contactsList[i] = item.split(':')
+        for field in contactsList[i]:
+          field = field.strip()
         i += 1
     contactsDict = dict()
     for item in contactsList:
@@ -42,7 +44,7 @@ def contacts_find():
     contactsList = contactsList.split('\n')
     i = 0
     for item in contactsList:
-        contactsList[i] = item.split(':')
+        contactsList[i] = item.split(' : ')
         i += 1
     contactsDict = dict()
     for item in contactsList:
@@ -63,7 +65,7 @@ def contacts_write():
     email = input('Email: ').lower()
     phoneNumber = input('Phone Number: ').lower()
     carrier = input('Carrier (for cell phones): ').lower()
-    cFile.write('\n'+ name + ':' + email + ':' + phoneNumber + ':' + carrier)
+    cFile.write('\n'+ name + ' : ' + email + ' : ' + phoneNumber + ' : ' + carrier)
     cFile.close()
     
 
