@@ -11,7 +11,11 @@ This is for Evergreen CS students who are sick of moving their homework to their
 
   - An email to SMS module
 
-This module will take a person's phone number and carrier and allow you to, in effect, text them via the console. It actually takes advantage of the email-to-text that is supported by almost every phone provider. (need more from the author of this module)
+This module will take a person's phone number and carrier and allow you to, in effect, text them via the console. It actually takes advantage of the email-to-text that is supported by almost every phone provider. There are two options for using the 'txt' command: txt <number> <carrier> and txt contact <name>. the contact option is integrated with the address book module--when you use the contact option the module calls address_book.export(<name>, 'phone'). This function returns the stored phone number and carrier information. I added the address book because of the burdensome nature of remembering carrier information for every phone number you might want to text; it should also be noted that there is no simple way to figure out the carrier given only a phone number. Also, each carrier uses a different email format for their email-to-sms service, making specific knowledge of the carrier essential.
+
+  - An address book
+
+The address book is a module for storing contact information. It stands on its own as an address book, with commands for adding, searching and viewing, but its primary purpose is to associate names with the information required for the sms and email modules. the address_book.export(name, info_type) function exports stored contact information from the address_book.tools plaintext document.
 
   -  Several other minor modules.
 
