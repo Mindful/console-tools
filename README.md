@@ -1,6 +1,6 @@
 Python Tool Console
 =========
-A simple project intended to help me and another Evergreen State College student learn Python fundamentals. Nothing exceptionally complicated here: the main .py file is a simple console shell that loads specific commands as modules from the tools_functions directory. If you are just learning Python and want to write something simple without having to worry about a console shell, the template for modules is at the bottom of the readme (although it's worth noting that Python provides a library for this: [cmd](http://docs.python.org/3.3/library/cmd.html "Python cmd library")).
+A simple project intended to help me and another Evergreen State College student learn Python fundamentals. Nothing exceptionally complicated here: the main .py file is a simple console shell that loads specific commands as modules from the tools_functions directory. If you are just learning Python and want to write something simple without having to worry about a console shell, the template for modules is at the bottom of the readme (although it's worth noting that Python provides a library for this: [cmd](http://docs.python.org/3.3/library/cmd.html "Python cmd library")). Written in 3.3.
 
 Included command modules:
 
