@@ -47,14 +47,14 @@ class ConsoleTools:
 
     settingsList = {}
     def write_settings(self):
-            sFile = open('settings.tool', 'w')
+            sFile = open(os.path.join(self.homeRoute, 'settings.tool'), 'w')
             sFile.write(self.settingsWarning)
             for key in self.settingsList:
                 sFile.write(key+' - '+self.settingsList[key][0]+'\n')
             sFile.close()
 
     def init_settings(self):
-        if os.path.exists('settings.tool'):
+        if os.path.exists(os.path.join(self.homeRoute,'settings.tool')):
             sFile = open('settings.tool', 'r+')
             for x in range (0, self.settingsWarning.count('\n')): 
                 #This may look confusing, but in reality it's just discarding the warning before reading settings by reading lines and doing nothing with the data
