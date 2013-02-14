@@ -9,7 +9,7 @@ def echo(self, args):
 func_alias = 'echo'
 func_info = (echo,
              0,
-             1,
+             -1,
              'Prints all arguments back to the user.',
              False,
              )

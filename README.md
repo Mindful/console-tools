@@ -29,7 +29,7 @@ def exampleFunc(self,args):
 func_alias = 'example_function'  #a string that represents the name by which your function is called as a command. cannot include whitespace characters
 func_info = (exampleFunc, #the actual function itself
              1, #the minimum number of arguments the function can take. fewer than min args will cause the function not to run
-             1, #the maximum number of arguments the function can take. excess arguments will be discarded
+             1, #the maximum number of arguments the function can take. excess arguments will be discarded. -1 means no max
             'This is a demo function; it does nothing.', #the information displayed about this function when a user runs the "help" command
             False, #a bool determining whether or not the function's input arguments are checked for case
             )

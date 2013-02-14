@@ -49,9 +49,9 @@ def contacts_find():
     contactsDict = dict()
     for item in contactsList:
         contactsDict[item[0]] = item[0:]
-    print('Search for a contact or enter "quit" to exit.')
+    print('Search for a contact or enter "exit" to exit.')
     search = input('Search: ')
-    while search != 'quit':
+    while search != 'exit':
         try:
             print(contactsDict[search])
         except KeyError:
@@ -83,7 +83,7 @@ def contacts_menu(self, args):
     commands = {'view': contacts_view,'add': contacts_write, 'help': help, 'search': contacts_find,}
     while not quit:
         command = input('(Contacts): ').strip().lower()
-        if command == 'quit':
+        if command == 'exit':
             quit = True
         elif command in commands:
             commands[command]()
@@ -95,7 +95,7 @@ func_alias = 'contacts'
 func_info = (contacts_menu,
             0,
             0,
-            'stores and manipulates a dictionary of names, phone numbers, and email addresses.\n Commands are view, add and remove.',
+            'stores and manipulates a dictionary of names, phone numbers, and email\naddresses. Commands are view, add, search and exit.',
             False,
             )
             
