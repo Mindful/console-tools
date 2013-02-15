@@ -1,11 +1,11 @@
-import sys, os, importlib, inspect, string
-
 #
 # So, all of this looking for files needs to be done relative to the homeRoute and toolsRoute variables established here
 # because if we leave it the way it is right now, these files are looked for in the directory you RUN IT FROM (see: console)
 # instead of the directory it's in. Also, the address_book could probably use some polish, and we might want to drop
 # zip module. And maybe a math module?
 #
+
+import sys, os, importlib, inspect, string
 
 class ConsoleTools:
     #note that these are static; variables declared in a class and not as part of an __init__ belong to the class as a whole

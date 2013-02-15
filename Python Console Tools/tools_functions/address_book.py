@@ -3,18 +3,18 @@
 # data would be stored in such a way that the user can access it directly, or while using one of the other programs
 # NOTE: other programs will probably have to be re-written for this to work with them.
 # use the settings file as a template, but it probably isn't exactly right for what we need here.
-import os
+import os.path, os
 
-def contacts_view():
-    cFile = open('address_book.tool','r+')
+def contacts_view(address):
+    cFile = open(address,'r+')
     contactsList = cFile.read()
     contactsList = contactsList.split('\n')
     for item in contactsList:
         print(item + '\n')
     cFile.close()
     
-def export(name, info_type):
-    cFile = open('address_book.tool','r+')
+def export(name, info_type, address):
+    cFile = open(address,'r+')
     contactsList = cFile.read()
     cFile.close()
     contactsList = contactsList.split('\n')
@@ -37,8 +37,8 @@ def export(name, info_type):
     except KeyError:
             return -1
     
-def contacts_find():
-    cFile = open('address_book.tool','r+')
+def contacts_find(address):
+    cFile = open(address,'r+')
     contactsList = cFile.read()
     cFile.close()
     contactsList = contactsList.split('\n')
@@ -51,50 +51,53 @@ def contacts_find():
         contactsDict[item[0]] = item[0:]
     print('Search for a contact or enter "exit" to exit.')
     search = input('Search: ')
+    results = [a for a in contactsList if a.startswith(search)]
     while search != 'exit':
-        try:
-            print(contactsDict[search])
-        except KeyError:
+        if len(results) < 1:
+            for item in results:
+              print(item)
+              print('\n')
+        else:
             print('Contact "'+ search + '" was not found.')
         search = input('Search: ')
     
-def contacts_write():
-    cFile = open('address_book.tool','a')
+def contacts_write(address):
+    cFile = open(address,'a')
     print('New Contact')
     name = input('Name: ').lower()
     email = input('Email: ').lower()
     phoneNumber = input('Phone Number: ').lower()
     carrier = input('Carrier (for cell phones): ').lower()
-        if carrier not in carrierCodes:
-          print('Invalid carrier')
-          return
+    if carrier not in carrierCodes:
+        print('Invalid carrier')
+        return
     cFile.write('\n'+ name + ' : ' + email + ' : ' + phoneNumber + ' : ' + carrier)
     cFile.close()
-    
 
-def address_book_init():
-    cFile = open('address_book.tool','w')
+def address_book_init(address):
+    cFile = open(address,'w')
     cFile.close()
     
-def help():
+def help(address):
     print(func_info[3])
     
 def contacts_menu(self, args):
-    if not os.path.exists('address_book.tool'):
+    address = os.path.join(self.homeRoute, 'address_book.tool')
+    if not os.path.exists(address):
         address_book_init()
     quit = False
-    commands = {'view': contacts_view, 'add': contacts_write, 'help': help, 'search': contacts_find}
+    commands = {'view': contacts_view, 'add': contacts_write, 'help': help, 'search': contacts_find, 'remove': remove}
     while not quit:
         command = input('(Contacts): ').strip().lower()
         if command == 'exit':
             quit = True
         elif command in commands:
-            commands[command]()
+            commands[command](address)
         else:
             print('Error: command "' + command + '" not found.')
             
 def remove(contact_name):
-    cFile = open('address_book.tool','r+')
+    cFile = open(address,'r+')
     contactsList = cFile.read()
     cFile.close()
     contactsList = contactsList.split('\n')
@@ -109,7 +112,6 @@ func_info = (contacts_menu,
             False,
             )
 
-address_book_path = self.            
 
 carrierCodes = {
     'sprint',
