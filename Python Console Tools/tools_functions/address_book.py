@@ -65,6 +65,9 @@ def contacts_write():
     email = input('Email: ').lower()
     phoneNumber = input('Phone Number: ').lower()
     carrier = input('Carrier (for cell phones): ').lower()
+        if carrier not in carrierCodes:
+          print('Invalid carrier')
+          return
     cFile.write('\n'+ name + ' : ' + email + ' : ' + phoneNumber + ' : ' + carrier)
     cFile.close()
     
@@ -80,7 +83,7 @@ def contacts_menu(self, args):
     if not os.path.exists('address_book.tool'):
         address_book_init()
     quit = False
-    commands = {'view': contacts_view,'add': contacts_write, 'help': help, 'search': contacts_find,}
+    commands = {'view': contacts_view, 'add': contacts_write, 'help': help, 'search': contacts_find}
     while not quit:
         command = input('(Contacts): ').strip().lower()
         if command == 'exit':
@@ -89,7 +92,14 @@ def contacts_menu(self, args):
             commands[command]()
         else:
             print('Error: command "' + command + '" not found.')
-    
+            
+def remove(contact_name):
+    cFile = open('address_book.tool','r+')
+    contactsList = cFile.read()
+    cFile.close()
+    contactsList = contactsList.split('\n')
+    i = 0
+    contactsList = [a for a in contactsList if not a.startswith(contact_name)]
 
 func_alias = 'contacts'
 func_info = (contacts_menu,
@@ -98,4 +108,16 @@ func_info = (contacts_menu,
             'stores and manipulates a dictionary of names, phone numbers, and email\naddresses. Commands are view, add, search and exit.',
             False,
             )
-            
+
+address_book_path = self.            
+
+carrierCodes = {
+    'sprint',
+    'verizon',
+    't-mobile',
+    'at&t',
+    'virgin mobile',
+    'us cellular',
+    'nextel',
+    'boost',
+    'alltel'}
