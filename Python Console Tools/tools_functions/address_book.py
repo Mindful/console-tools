@@ -42,24 +42,15 @@ def contacts_find(address):
     contactsList = cFile.read()
     cFile.close()
     contactsList = contactsList.split('\n')
-    i = 0
-    for item in contactsList:
-        contactsList[i] = item.split(':')
-        for a in contactsList[i]:
-          a = a.strip()
-        i += 1
-    contactsDict = dict()
-    for item in contactsList:
-        contactsDict[item[0]] = item[0:]
     print('Search for a contact or enter "exit" to exit.')
-    search = input('Search: ')
-    for 
-    results = [a for a in contactsDict if a.startswith(search)]
+    search = input('Search: ').lower().strip()
+    results = [a for a in contactsList if a.startswith(search)]
     while search != 'exit':
-        if len(results) < 1:
+        if len(results) > 0:
             for item in results:
               print(item)
-              print('\n')
+              if len(results) > 1:
+                print('\n')
         else:
             print('Contact "'+ search + '" was not found.')
         search = input('Search: ')
