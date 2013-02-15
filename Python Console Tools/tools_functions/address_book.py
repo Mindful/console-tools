@@ -44,14 +44,17 @@ def contacts_find(address):
     contactsList = contactsList.split('\n')
     i = 0
     for item in contactsList:
-        contactsList[i] = item.split(' : ')
+        contactsList[i] = item.split(':')
+        for a in contactsList[i]:
+          a = a.strip()
         i += 1
     contactsDict = dict()
     for item in contactsList:
         contactsDict[item[0]] = item[0:]
     print('Search for a contact or enter "exit" to exit.')
     search = input('Search: ')
-    results = [a for a in contactsList if a.startswith(search)]
+    for 
+    results = [a for a in contactsDict if a.startswith(search)]
     while search != 'exit':
         if len(results) < 1:
             for item in results:
