@@ -1,8 +1,7 @@
 # address book tool
 # make a file in the directory that contains an organized list of names, email addresses, and phone numbers (with service carrier)
 # data would be stored in such a way that the user can access it directly, or while using one of the other programs
-# NOTE: other programs will probably have to be re-written for this to work with them.
-# use the settings file as a template, but it probably isn't exactly right for what we need here.
+
 import os.path, os
 
 def contacts_view(address):
@@ -44,13 +43,11 @@ def contacts_find(address):
     contactsList = contactsList.split('\n')
     print('Search for a contact or enter "exit" to exit.')
     search = input('Search: ').lower().strip()
-    results = [a for a in contactsList if a.startswith(search)]
     while search != 'exit':
+        results = [a for a in contactsList if a.startswith(search)]
         if len(results) > 0:
             for item in results:
-              print(item)
-              if len(results) > 1:
-                print('\n')
+              print('\n' + item + '\n')
         else:
             print('Contact "'+ search + '" was not found.')
         search = input('Search: ')
@@ -78,7 +75,7 @@ def help(address):
 def contacts_menu(self, args):
     address = os.path.join(self.homeRoute, 'address_book.tool')
     if not os.path.exists(address):
-        address_book_init()
+        address_book_init(address)
     quit = False
     commands = {'view': contacts_view, 'add': contacts_write, 'help': help, 'search': contacts_find, 'remove': remove}
     while not quit:
@@ -90,13 +87,29 @@ def contacts_menu(self, args):
         else:
             print('Error: command "' + command + '" not found.')
             
-def remove(contact_name):
+def remove(address):
     cFile = open(address,'r+')
     contactsList = cFile.read()
     cFile.close()
+    contact_name = input('Contact to remove from list: ')
     contactsList = contactsList.split('\n')
-    i = 0
-    contactsList = [a for a in contactsList if not a.startswith(contact_name)]
+    contactsList_length = len(contactsList)
+    found = False
+    for item in contactsList:
+      print(item)
+      if item is not "" and item[:item.index(' : ')] == contact_name:
+        a = contactsList.index(item)
+        contactsList = contactsList[:a] + contactsList[a+1:]
+        found = True
+    if not found:
+        print('Contact \'' + contact_name + '\' not found')
+        return
+    cFile = open(address,'w')
+    writeList = ""
+    for item in contactsList:
+        writeList = writeList + '\n' + item
+    cFile.write(writeList)
+    cFile.close()
 
 func_alias = 'contacts'
 func_info = (contacts_menu,
@@ -105,7 +118,6 @@ func_info = (contacts_menu,
             'stores and manipulates a dictionary of names, phone numbers, and email\naddresses. Commands are view, add, search and exit.',
             False,
             )
-
 
 carrierCodes = {
     'sprint',
