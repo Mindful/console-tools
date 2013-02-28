@@ -36,8 +36,9 @@ class outReader:
             if self.display and (not self.ignoreString or line.find(self.ignoreString) == -1):
                 sys.stdout.write(line)
             elif self.printNext:
-                print(line)
                 self.printNext = False
+                if not self.ignoreString or line.find(self.ignoreString) == -1:
+                    print(line)
 
 subjects = ['discretemath', 'java', 'arch', 'probsolv']
 def submit(self, args):
@@ -184,7 +185,7 @@ def submit_ada(self, thread, file, user):
         serverCommands = ("csf_submit "+thread+" "+file, "exit", "n")
     discardString = ']0;'+user+'@ada: ~[0;32m'+user+'[0;37m@[0;32mada[00m:[01;34m~[00m$ '
     proc = subprocess.Popen(connectionArgs, bufsize=1, shell=False, stdin=subprocess.PIPE,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    reader = outReader(proc.stdout)
+    reader = outReader(proc.stdout, ignoreString = discardString)
     counter = 0
     while True:
         try:
