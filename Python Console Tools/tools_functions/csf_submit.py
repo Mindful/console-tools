@@ -159,6 +159,7 @@ def view_ada(self, user):
                 reader.display = True
             elif line.find(serverCommands[0]) != -1:
                 break
+    time.sleep(0.5)
     reader.dead = True
     try:
         proc.communicate(formatCmd(serverCommands[1]), 15)
