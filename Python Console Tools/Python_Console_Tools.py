@@ -18,10 +18,12 @@ class ConsoleTools:
         if user == 'root':
             print('Root should not run Python Console Tools. Please run as another user.')
             sys.exit()
-        else: homeRoute = '/home/'+user
+        else:
+            homeRoute = '/home/'+user
+            toolsRoute = os.path.join(os.path.split(os.path.realpath(__file__))[0], 'tools_functions')
     else:
         homeRoute = os.path.split(os.path.realpath(__file__))[0]
-    toolsRoute = os.path.join(homeRoute, 'tools_functions')
+        toolsRoute = os.path.join(homeRoute, 'tools_functions')
     settingsRoute = os.path.join(homeRoute, 'settings.tool')
 
     #To add a setting, simply add its alias and default value (both must be strings) to the settings dict. Note the value will have to be interpreted later
