@@ -61,4 +61,4 @@ func_info = (email_tool,
             'email <address> sends an email to the given address.',
             False,
             )
-settings = {'subject': ('T', False), 'anonymous': ('F', False),'password':('', True),'toAddress':('WERP', False)}
+settings = {'subject': ('T', False), 'anonymous': ('F', False),'password':('', True),'toAddress':('', False)}
