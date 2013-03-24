@@ -18,7 +18,7 @@ class ConsoleTools:
         if user == 'root':
             print('Root should not run Python Console Tools. Please run as another user.')
             sys.exit()
-        else: homeRoute = 'home/'+user
+        else: homeRoute = '/home/'+user
     else:
         homeRoute = os.path.split(os.path.realpath(__file__))[0]
     toolsRoute = os.path.join(homeRoute, 'tools_functions')
