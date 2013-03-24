@@ -1,4 +1,4 @@
-import smtplib, sys, getpass
+import smtplib, sys, getpass, os
 from email.mime.text import MIMEText
 
 def email_tool(self,args):
