@@ -1,4 +1,4 @@
-import smtplib, sys, getpass, os
+import smtplib, sys, getpass
 from email.mime.text import MIMEText
 
 def email_tool(self,args):
@@ -34,19 +34,45 @@ def email_tool(self,args):
         print('Error: could not find server for ' + mailHost)
     s.ehlo()
     s.starttls()
+    login_unsuccessful = True
+    loop_terminated = False
     if self.settingsList['password'] is '':
-        try:
-            s.login(msg['From'], getpass.getpass())
-        except smtplib.SMTPAuthenticationError:
-            s.login(input('\'From\': '), getpass.getpass())
+            try:
+                s.login(msg['From'], getpass.getpass())
+                login_unsuccessful = False
+            except smtplib.SMTPAuthenticationError:
+                while login_unsuccessful and not loop_terminated:
+                    try:
+                        from_addr = input('\'From\': ')
+                        password = prompt_pass('Enter \'quit\' to quit')
+                        s.login(from_addr, password)
+                        login_unsuccessful = False
+                        if password is 'quit':
+                            loop_terminated = True
+                    except smtplib.SMTPAuthenticationError:
+                        login_unsuccessful = True
     else:
-     try:
-        s.login(msg['From'], self.simpleDecrypt(self.settingsList['password'][0]))
-     except smtplib.SMTPAuthenticationError:
-        s.login(msg['From'], getpass.getpass())
+            try:
+                s.login(msg['From'], self.simpleDecrypt(self.settingsList['password'][0]))
+                login_unsuccessful = False
+            except smtplib.SMTPAuthenticationError:
+                while login_unsuccessful and not loop_terminated:
+                    try:
+                        from_addr = input('\'From\': ')
+                        password = prompt_pass('Enter \'quit\' to quit')
+                        s.login(from_addr, password)
+                        login_unsuccessful = False
+                        if password is 'quit':
+                            loop_terminated = True
+                    except smtplib.SMTPAuthenticationError:
+                        login_unsuccessful = True
     
     s.send_message(msg)
     s.quit()
+    
+def prompt_pass(prompt):
+    print(prompt)
+    return getpass.getpass()
 
     
 serverDict = {  'gmail.com':('smtp.gmail.com', 587),
@@ -61,4 +87,4 @@ func_info = (email_tool,
             'email <address> sends an email to the given address.',
             False,
             )
-settings = {'subject': ('T', False), 'anonymous': ('F', False),'password':('', True),'toAddress':('', False)}
+settings = {'subject': ('T', False), 'anonymous': ('F', False),'password':('', True),'toAddress':('WERP', False)}
