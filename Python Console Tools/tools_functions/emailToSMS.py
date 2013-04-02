@@ -73,24 +73,33 @@ def send(self, msg, fromAddress, password, toAddress):
         print('Error: could not find server for ' + mailHost)
     s.ehlo()
     s.starttls()
-    if self.settingsList['password'] is '':
-     try:
-        s.login(message['From'], password)
-     except smtplib.SMTPAuthenticationError:
-        password = getpass.getpass('Invalid password: ')
-        while password != 'quit':
-            s.login(message['From'], password)
+    try:
+        if self.simpleDecrypt(self.settingsList['password'][0]) is '':
+         try:
+            s.login(message['From'], getpass.getpass('password: '))
+         except smtplib.SMTPAuthenticationError:
             password = getpass.getpass('Invalid password: ')
-    else:
-     try:
-        s.login(message['From'], self.simpleDecrypt(self.settingsList['password'][0]))
-     except smtplib.SMTPAuthenticationError:
-        password = getpass.getpass('Error: unrecognized password in "settings.tool". Password: ')
-        while password != 'quit':
-            s.login(message['From'], password)
-            password = getpass.getpass('Invalid password. Password: ')
-
-    s.send_message(message)
+            while password != 'quit':
+              try:
+                s.login(message['From'], password)
+                password = 'quit'
+              except smtplib.SMTPAuthenticationError:
+                password = getpass.getpass('Invalid password: ')
+        else:
+         try:
+            s.login(message['From'], self.simpleDecrypt(self.settingsList['password'][0]))
+         except smtplib.SMTPAuthenticationError:
+            password = getpass.getpass('Error: unrecognized password in "settings.tool". Password: ')
+            while password != 'quit':
+              try:
+                s.login(message['From'], password)
+                password = 'quit'
+              except smtplib.SMTPAuthenticationError:
+                password = getpass.getpass('Invalid password: ')
+        
+        s.send_message(message)
+    except smtplib.SMTPServerDisconnected:
+        print('Connection terminated by server: connection timed out.')
     s.quit()
     
 serverDict = {  'gmail.com':('smtp.gmail.com', 587),
