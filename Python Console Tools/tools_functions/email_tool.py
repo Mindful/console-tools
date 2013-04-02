@@ -34,24 +34,29 @@ def email_tool(self,args):
         print('Error: could not find server for ' + mailHost)
     s.ehlo()
     s.starttls()
-    if self.settingsList['password'] is '':
+    if self.simpleDecrypt(self.settingsList['password'][0]) is '':
      try:
-        s.login(message['From'], password)
+        s.login(msg['From'], getpass.getpass('password:'))
      except smtplib.SMTPAuthenticationError:
         password = getpass.getpass('Invalid password: ')
         while password != 'quit':
-            s.login(message['From'], password)
+          try:
+            s.login(msg['From'], password)
+            password = 'quit'
+          except smtplib.SMTPAuthenticationError:
             password = getpass.getpass('Invalid password: ')
     else:
      try:
-        s.login(message['From'], self.simpleDecrypt(self.settingsList['password'][0]))
+        s.login(msg['From'], self.simpleDecrypt(self.settingsList['password'][0]))
      except smtplib.SMTPAuthenticationError:
         password = getpass.getpass('Error: unrecognized password in "settings.tool". Password: ')
         while password != 'quit':
-            s.login(message['From'], password)
-            password = getpass.getpass('Invalid password. Password: ')
-    
-    s.send_message(msg)
+          try:
+            s.login(msg['From'], password)
+            s.send_message(msg)
+            password = 'quit'
+          except smtplib.SMTPAuthenticationError:
+            password = getpass.getpass('Invalid password: ')
     s.quit()
     
 def prompt_pass(prompt):
