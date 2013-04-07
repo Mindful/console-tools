@@ -7,7 +7,7 @@ Included command modules:
 
   - A csf_submit module
 
-This is for Evergreen CS students who are sick of moving their homework to their server before submitting it. It wraps plink/pscp (both must be in the tools_functions directory for it to function properly) and handles logging in and submitting homework. It will even handle zipping if you give it a directory. Note that this module relies on storing a verly lightly obscured copy of your username/password as settings. **Known issues:** The module will not work properly unless Ada (ada.evergreen.edu) is has already been cached by putty/plink/pscp/etc., and will not properly handle 0-byte files.
+This is for Evergreen CS students who are sick of moving their homework to their server before submitting it. It wraps plink/pscp (both must be in the tools_functions directory for it to function properly) and handles logging in and submitting homework. It will even handle zipping if you give it a directory. Note that this module relies on storing a verly lightly obscured copy of your username/password as settings. **Known issues:** The module will not work properly unless Ada (ada.evergreen.edu) has already been cached by putty/plink/pscp/etc., and does not properly handle 0-byte files.
 
   - An email to SMS module
 
