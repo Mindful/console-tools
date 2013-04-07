@@ -48,17 +48,15 @@ def submit(self, args):
     global linux
     linux = self.linux
     if linux:
-        plinktest = subprocess.check_output(['plink', '-V'])
-        pscptest = subprocess.check_output(['pscp', '-V'])
-        if not str(pscptest).startswith('pscp:'):
+        plinktest = subprocess.Popen(['plink', '-V'], stdout=subprocess.PIPE)
+        pscptest = subprocess.Popen(['pscp', '-V'], stdout=subprocess.PIPE)
+        if not pscptest.communicate()[0].decode().startswith('pscp:'):
             print('Error: could not verify putty-tools/pscp installation.')
             return
-        if not str(plinktest).startswith('plink:'):
+        if not plinktest.communicate()[0].decode().startswith('plink:'):
             print('Error: could not verify putty-tools/plink installation.')
             return
         print("The csf_submit command is not currently implemented for Linux systems.")
-        print(pscptest)
-        print(plinktest)
         return
     else:
         pscproute = os.path.join(self.toolsRoute, 'pscp.exe')
