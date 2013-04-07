@@ -27,7 +27,8 @@ class outReader:
         self.t = Thread(target=self.enqueue_output, args=(outStream, self.q))
         self.t.daemon = True
         self.t.start()
-        self.display = toPrint
+        #self.display = toPrint
+        self.display = True
 
     def enqueue_output(self, outStream, queue):
         for line in iter(outStream.readline, b''):
@@ -124,11 +125,11 @@ def submit(self, args):
 def upload_ada(self, file, user):
 
     if linux:
-        connectionArgs = ['pscp', 
-                '-ssh', 
+       uploadArgs = ['pscp',  
                 '-pw', 
                 self.simpleDecrypt(self.settingsList['ada_password'][0]),
-                user+'@ada.evergreen.edu',
+                file,
+		user+'@ada.evergreen.edu:/home/+'+user,
                 ]
     else:
         uploadArgs = [self.toolsRoute+'\\'+'pscp.exe', 
