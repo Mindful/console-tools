@@ -7,6 +7,8 @@ import os, inspect, subprocess, sys, time, zipfile, shutil, tarfile
 from queue import Queue, Empty
 from threading import Thread
 
+linux = None
+
 class adaError(Exception):
 
     def __init__(self, value):
@@ -43,14 +45,30 @@ class outReader:
 subjects = ['discretemath', 'java', 'arch', 'probsolv']
 def submit(self, args):
     #All these if(x) then return statements are just error checking. want to make sure everything's in order before we try an upload
-    pscproute = os.path.join(self.toolsRoute, 'pscp.exe')
-    plinkroute = os.path.join(self.toolsRoute, 'plink.exe')
-    if not (os.path.exists(pscproute)):
-        print('Error: could not find pscp.exe in the tools_functions directory.')
+    global linux
+    linux = self.linux
+    if linux:
+        plinktest = subprocess.check_output(['plink', '-V'])
+        pscptest = subprocess.check_output(['pscp', '-V'])
+        if not str(pscptest).startswith('pscp:'):
+            print('Error: could not verify putty-tools/pscp installation.')
+            return
+        if not str(plinktest).startswith('plink:'):
+            print('Error: could not verify putty-tools/plink installation.')
+            return
+        print("The csf_submit command is not currently implemented for Linux systems.")
+        print(pscptest)
+        print(plinktest)
         return
-    if not (os.path.exists(plinkroute)):
-        print('Error: could not find plink.exe in the tools_functions directory.')
-        return
+    else:
+        pscproute = os.path.join(self.toolsRoute, 'pscp.exe')
+        plinkroute = os.path.join(self.toolsRoute, 'plink.exe')
+        if not (os.path.exists(pscproute)):
+            print('Error: could not find pscp.exe in the tools_functions directory.')
+            return
+        if not (os.path.exists(plinkroute)):
+            print('Error: could not find plink.exe in the tools_functions directory.')
+            return
     usName = self.simpleDecrypt(self.settingsList['ada_username'][0])
     if len(args) < 2:
         if args[0].lower() == 'view': #the .lower here will be redundant if we find this function not to be case sensitive
