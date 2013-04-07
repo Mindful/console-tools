@@ -27,8 +27,7 @@ class outReader:
         self.t = Thread(target=self.enqueue_output, args=(outStream, self.q))
         self.t.daemon = True
         self.t.start()
-        #self.display = toPrint
-        self.display = True
+        self.display = toPrint
 
     def enqueue_output(self, outStream, queue):
         for line in iter(outStream.readline, b''):
