@@ -124,12 +124,21 @@ def submit(self, args):
     
 
 def upload_ada(self, file, user):
-    uploadArgs = [self.toolsRoute+'\\'+'pscp.exe', 
-                  '-pw', 
-                  self.simpleDecrypt(self.settingsList['ada_password'][0]),
-                  file,
-                  user+'@ada.evergreen.edu:/home/'+user,
-                  ]
+
+    if linux:
+        connectionArgs = ['pscp', 
+                '-ssh', 
+                '-pw', 
+                self.simpleDecrypt(self.settingsList['ada_password'][0]),
+                user+'@ada.evergreen.edu',
+                ]
+    else:
+        uploadArgs = [self.toolsRoute+'\\'+'pscp.exe', 
+                      '-pw', 
+                      self.simpleDecrypt(self.settingsList['ada_password'][0]),
+                      file,
+                      user+'@ada.evergreen.edu:/home/'+user,
+                      ]
     proc = subprocess.Popen(uploadArgs, bufsize=1, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     try:
         s = proc.communicate(None, 15)[0].decode("utf-8")
@@ -143,12 +152,21 @@ def upload_ada(self, file, user):
         raise adaError(s)
 
 def view_ada(self, user):
-    connectionArgs = [self.toolsRoute+'\\'+'plink.exe', 
-                  '-ssh', 
-                  '-pw', 
-                  self.simpleDecrypt(self.settingsList['ada_password'][0]),
-                  user+'@ada.evergreen.edu',
-                  ]
+
+    if linux:
+        connectionArgs = ['plink', 
+                '-ssh', 
+                '-pw', 
+                self.simpleDecrypt(self.settingsList['ada_password'][0]),
+                user+'@ada.evergreen.edu',
+                ]
+    else:
+        connectionArgs = [self.toolsRoute+'\\'+'plink.exe', 
+                      '-ssh', 
+                      '-pw', 
+                      self.simpleDecrypt(self.settingsList['ada_password'][0]),
+                      user+'@ada.evergreen.edu',
+                      ]
     serverCommands = ("csf_submit view", "exit")
     discardString = ']0;'+user+'@ada: ~[0;32m'+user+'[0;37m@[0;32mada[00m:[01;34m~[00m$ '
     proc = subprocess.Popen(connectionArgs, bufsize=1, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -190,12 +208,21 @@ def submit_ada(self, thread, file, user):
         overwrite = self.boolSetting('csf_overwrite')
     except TypeError:
         raise adaError('csf_overwrite setting was not a recognizable\nboolean value. Pleaseset csf_overwrite to "T" or "F".')
-    connectionArgs = [self.toolsRoute+'\\'+'plink.exe', 
-                  '-ssh', 
-                  '-pw', 
-                  self.simpleDecrypt(self.settingsList['ada_password'][0]),
-                  user+'@ada.evergreen.edu',
-                  ]
+
+    if linux:
+        connectionArgs = ['plink', 
+                '-ssh', 
+                '-pw', 
+                self.simpleDecrypt(self.settingsList['ada_password'][0]),
+                user+'@ada.evergreen.edu',
+                ]
+    else:
+        connectionArgs = [self.toolsRoute+'\\'+'plink.exe', 
+                      '-ssh', 
+                      '-pw', 
+                      self.simpleDecrypt(self.settingsList['ada_password'][0]),
+                      user+'@ada.evergreen.edu',
+                      ]
     if overwrite:
         serverCommands = ("csf_submit "+thread+" "+file, "exit", "y")
     else:
