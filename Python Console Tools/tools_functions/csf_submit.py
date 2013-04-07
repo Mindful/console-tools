@@ -125,12 +125,12 @@ def submit(self, args):
 def upload_ada(self, file, user):
 
     if linux:
-       uploadArgs = ['pscp',  
-                '-pw', 
-                self.simpleDecrypt(self.settingsList['ada_password'][0]),
-                file,
-		user+'@ada.evergreen.edu:/home/+'+user,
-                ]
+        uploadArgs = ['pscp', 
+                      '-pw', 
+                      self.simpleDecrypt(self.settingsList['ada_password'][0]),
+                      file,
+                      user+'@ada.evergreen.edu:/home/'+user,
+                      ]
     else:
         uploadArgs = [self.toolsRoute+'\\'+'pscp.exe', 
                       '-pw', 
