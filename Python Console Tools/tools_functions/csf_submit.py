@@ -56,8 +56,6 @@ def submit(self, args):
         if not plinktest.communicate()[0].decode().startswith('plink:'):
             print('Error: could not verify putty-tools/plink installation.')
             return
-        print("The csf_submit command is not currently implemented for Linux systems.")
-        return
     else:
         pscproute = os.path.join(self.toolsRoute, 'pscp.exe')
         plinkroute = os.path.join(self.toolsRoute, 'plink.exe')
